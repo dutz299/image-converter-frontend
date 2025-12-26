@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const API_BASE = "https://image-converter-backend-kvz6.onrender.com";
 const AD_SCRIPT =
@@ -8,7 +8,9 @@ function App() {
   const [files, setFiles] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [adUnlocked, setAdUnlocked] = useState(false);
+
   const [showAdOverlay, setShowAdOverlay] = useState(false);
+  const [countdown, setCountdown] = useState(10);
 
   // Upload
   const handleUpload = async () => {
@@ -24,19 +26,28 @@ function App() {
     setSessionId(data.sessionId);
   };
 
-  // Werbung anzeigen + freischalten
+  // Werbung anzeigen
   const watchAd = () => {
     if (!sessionId) return;
 
     setShowAdOverlay(true);
+    setCountdown(10);
 
+    // Ad-Script laden
     const script = document.createElement("script");
     script.src = AD_SCRIPT;
     script.async = true;
     document.body.appendChild(script);
 
-    // Fallback-Timer (10 Sekunden)
+    // Countdown
+    const interval = setInterval(() => {
+      setCountdown((c) => c - 1);
+    }, 1000);
+
+    // Nach 10 Sekunden freischalten
     setTimeout(async () => {
+      clearInterval(interval);
+
       await fetch(`${API_BASE}/ad-complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,22 +70,19 @@ function App() {
         onChange={(e) => setFiles([...e.target.files])}
       />
 
-      <br />
-      <br />
+      <br /><br />
 
       <button onClick={handleUpload} disabled={files.length === 0}>
         Dateien hochladen
       </button>
 
-      <br />
-      <br />
+      <br /><br />
 
       <button onClick={watchAd} disabled={!sessionId}>
         Werbung ansehen & freischalten
       </button>
 
-      <br />
-      <br />
+      <br /><br />
 
       <button
         disabled={!adUnlocked}
@@ -90,16 +98,28 @@ function App() {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.75)",
+            background: "rgba(0,0,0,0.8)",
             color: "#fff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 9999,
-            fontSize: 24
+            zIndex: 9999
           }}
         >
-          Werbung wird geladen …
+          <div style={{ textAlign: "center", maxWidth: 400 }}>
+            <h2>Bitte kurze Werbung ansehen</h2>
+            <p>
+              Dein Download wird danach automatisch freigeschaltet.
+            </p>
+
+            <div style={{ fontSize: 32, margin: "20px 0" }}>
+              {countdown > 0 ? countdown : "✔"}
+            </div>
+
+            <p style={{ fontSize: 12, opacity: 0.8 }}>
+              Falls keine Werbung erscheint, bitte kurz den Adblocker deaktivieren.
+            </p>
+          </div>
         </div>
       )}
     </div>
