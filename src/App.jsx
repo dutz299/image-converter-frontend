@@ -4,9 +4,9 @@ const API_BASE = "https://image-converter-backend-kvz6.onrender.com";
 const AD_SCRIPT =
   "https://pl28339042.effectivegatecpm.com/89/f4/4d/89f44d1ee7fda7ebb0ab5a814df9d988.js";
 
-// =====================
-// 📄 IMPRESSUM
-// =====================
+/* =====================
+   IMPRESSUM
+===================== */
 function Impressum() {
   return (
     <div style={{ padding: 40 }}>
@@ -31,14 +31,15 @@ Stemberg 70
 32805 Horn-Bad Meinberg
 Deutschland`}
       </pre>
+      <br />
       <a href="/">← Zurück</a>
     </div>
   );
 }
 
-// =====================
-// 🔐 DATENSCHUTZ
-// =====================
+/* =====================
+   DATENSCHUTZ
+===================== */
 function Datenschutz() {
   return (
     <div style={{ padding: 40 }}>
@@ -51,12 +52,12 @@ Stemberg 70
 Deutschland
 E-Mail: dutz299@gmail.com
 
-Beim Besuch der Website werden technisch notwendige Daten
-(IP-Adresse, Browser, Uhrzeit) verarbeitet.
+Beim Besuch der Website werden technisch notwendige Daten verarbeitet
+(z. B. IP-Adresse, Browsertyp, Uhrzeit).
 
 Datei-Uploads:
-Hochgeladene Bilder werden ausschließlich zur Konvertierung verwendet
-und spätestens nach 30 Minuten gelöscht.
+Bilder werden nur zur Konvertierung genutzt und spätestens
+nach 30 Minuten automatisch gelöscht.
 
 Werbung:
 Diese Website nutzt Werbung von Adsterra.
@@ -67,21 +68,21 @@ Frontend: Vercel Inc.
 Backend: Render Services, Inc.
 
 Rechte:
-Sie haben jederzeit das Recht auf Auskunft, Löschung und Widerspruch
+Sie haben das Recht auf Auskunft, Löschung und Widerspruch
 gemäß DSGVO.`}
       </pre>
+      <br />
       <a href="/">← Zurück</a>
     </div>
   );
 }
 
-// =====================
-// 🧠 APP
-// =====================
+/* =====================
+   APP
+===================== */
 function App() {
   const path = window.location.pathname;
 
-  // Seiten-Routing (OHNE Router)
   if (path === "/impressum") return <Impressum />;
   if (path === "/datenschutz") return <Datenschutz />;
 
@@ -91,9 +92,6 @@ function App() {
   const [showAdOverlay, setShowAdOverlay] = useState(false);
   const [countdown, setCountdown] = useState(14);
 
-  // =====================
-  // 📤 UPLOAD
-  // =====================
   const handleUpload = async () => {
     const formData = new FormData();
     files.forEach((file) => formData.append("images", file));
@@ -107,9 +105,6 @@ function App() {
     setSessionId(data.sessionId);
   };
 
-  // =====================
-  // 🎥 WERBUNG
-  // =====================
   const watchAd = () => {
     if (!sessionId || adUnlocked) return;
 
@@ -173,7 +168,6 @@ function App() {
         Konvertierung starten
       </button>
 
-      {/* Overlay */}
       {showAdOverlay && (
         <div
           style={{
@@ -189,7 +183,6 @@ function App() {
         >
           <div style={{ textAlign: "center" }}>
             <h2>Bitte kurze Werbung ansehen</h2>
-            <p>Dein Download wird danach freigeschaltet.</p>
             <div style={{ fontSize: 36 }}>
               {countdown > 0 ? countdown : "✔"}
             </div>
