@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const API_BASE = "https://image-converter-backend-kvz6.onrender.com";
 const AD_SCRIPT =
@@ -10,9 +10,11 @@ function App() {
   const [adUnlocked, setAdUnlocked] = useState(false);
 
   const [showAdOverlay, setShowAdOverlay] = useState(false);
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(14);
 
-  // Upload
+  // =====================
+  // UPLOAD
+  // =====================
   const handleUpload = async () => {
     const formData = new FormData();
     files.forEach((file) => formData.append("images", file));
@@ -26,25 +28,27 @@ function App() {
     setSessionId(data.sessionId);
   };
 
-  // Werbung anzeigen
+  // =====================
+  // WERBUNG + FREIGABE
+  // =====================
   const watchAd = () => {
     if (!sessionId) return;
 
     setShowAdOverlay(true);
-    setCountdown(10);
+    setCountdown(14);
 
-    // Ad-Script laden
+    // Adsterra Script laden
     const script = document.createElement("script");
     script.src = AD_SCRIPT;
     script.async = true;
     document.body.appendChild(script);
 
-    // Countdown
+    // Countdown runterzählen
     const interval = setInterval(() => {
       setCountdown((c) => c - 1);
     }, 1000);
 
-    // Nach 10 Sekunden freischalten
+    // Nach 14 Sekunden freischalten
     setTimeout(async () => {
       clearInterval(interval);
 
@@ -56,7 +60,7 @@ function App() {
 
       setAdUnlocked(true);
       setShowAdOverlay(false);
-    }, 10000);
+    }, 14000);
   };
 
   return (
@@ -93,6 +97,9 @@ function App() {
         Konvertierung starten
       </button>
 
+      {/* =====================
+          AD OVERLAY + COUNTDOWN
+         ===================== */}
       {showAdOverlay && (
         <div
           style={{
@@ -106,13 +113,13 @@ function App() {
             zIndex: 9999
           }}
         >
-          <div style={{ textAlign: "center", maxWidth: 400 }}>
+          <div style={{ textAlign: "center", maxWidth: 420 }}>
             <h2>Bitte kurze Werbung ansehen</h2>
             <p>
               Dein Download wird danach automatisch freigeschaltet.
             </p>
 
-            <div style={{ fontSize: 32, margin: "20px 0" }}>
+            <div style={{ fontSize: 36, margin: "20px 0" }}>
               {countdown > 0 ? countdown : "✔"}
             </div>
 
