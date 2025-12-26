@@ -4,6 +4,8 @@ const API_BASE = "https://image-converter-backend-kvz6.onrender.com";
 const AD_SCRIPT =
   "https://pl28339042.effectivegatecpm.com/89/f4/4d/89f44d1ee7fda7ebb0ab5a814df9d988.js";
 
+const FREE_LIMIT = 20;
+
 /* =====================
    IMPRESSUM
 ===================== */
@@ -11,8 +13,7 @@ function Impressum() {
   return (
     <div style={{ padding: 40 }}>
       <h1>Impressum</h1>
-      <pre>
-{`Angaben gemäß § 5 TMG
+      <pre>{`Angaben gemäß § 5 TMG
 
 Name:
 Dorian Sandow
@@ -29,8 +30,7 @@ Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
 Dorian Sandow
 Stemberg 70
 32805 Horn-Bad Meinberg
-Deutschland`}
-      </pre>
+Deutschland`}</pre>
       <br />
       <a href="/">← Zurück</a>
     </div>
@@ -44,33 +44,20 @@ function Datenschutz() {
   return (
     <div style={{ padding: 40 }}>
       <h1>Datenschutzerklärung</h1>
-      <pre>
-{`Verantwortlicher:
+      <pre>{`Verantwortlicher:
 Dorian Sandow
 Stemberg 70
 32805 Horn-Bad Meinberg
 Deutschland
 E-Mail: dutz299@gmail.com
 
-Beim Besuch der Website werden technisch notwendige Daten verarbeitet
-(z. B. IP-Adresse, Browsertyp, Uhrzeit).
-
 Datei-Uploads:
-Bilder werden nur zur Konvertierung genutzt und spätestens
-nach 30 Minuten automatisch gelöscht.
+Bilder werden ausschließlich zur Konvertierung verwendet
+und spätestens nach 30 Minuten gelöscht.
 
 Werbung:
 Diese Website nutzt Werbung von Adsterra.
-https://adsterra.com/privacy-policy
-
-Hosting:
-Frontend: Vercel Inc.
-Backend: Render Services, Inc.
-
-Rechte:
-Sie haben das Recht auf Auskunft, Löschung und Widerspruch
-gemäß DSGVO.`}
-      </pre>
+https://adsterra.com/privacy-policy`}</pre>
       <br />
       <a href="/">← Zurück</a>
     </div>
@@ -82,7 +69,6 @@ gemäß DSGVO.`}
 ===================== */
 function App() {
   const path = window.location.pathname;
-
   if (path === "/impressum") return <Impressum />;
   if (path === "/datenschutz") return <Datenschutz />;
 
@@ -93,6 +79,8 @@ function App() {
   const [countdown, setCountdown] = useState(14);
 
   const handleUpload = async () => {
+    if (files.length > FREE_LIMIT) return;
+
     const formData = new FormData();
     files.forEach((file) => formData.append("images", file));
 
@@ -122,13 +110,11 @@ function App() {
 
     setTimeout(async () => {
       clearInterval(interval);
-
       await fetch(`${API_BASE}/ad-complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId })
       });
-
       setAdUnlocked(true);
       setShowAdOverlay(false);
     }, 14000);
@@ -145,9 +131,20 @@ function App() {
         onChange={(e) => setFiles([...e.target.files])}
       />
 
-      <br /><br />
+      {files.length > FREE_LIMIT && (
+        <p style={{ color: "red", marginTop: 10 }}>
+          ❌ Du hast das kostenlose Limit von {FREE_LIMIT} Dateien überschritten.
+          <br />
+          👉 Unbegrenzt & ohne Werbung in der Desktop-Version
+        </p>
+      )}
 
-      <button onClick={handleUpload} disabled={files.length === 0}>
+      <br />
+
+      <button
+        onClick={handleUpload}
+        disabled={files.length === 0 || files.length > FREE_LIMIT}
+      >
         Dateien hochladen
       </button>
 
@@ -167,6 +164,28 @@ function App() {
       >
         Konvertierung starten
       </button>
+
+      {/* Pro-Version Upsell */}
+      <div
+        style={{
+          marginTop: 40,
+          padding: 20,
+          border: "1px solid #ddd",
+          borderRadius: 8,
+          background: "#fafafa"
+        }}
+      >
+        <h3>Pro-Version (Desktop)</h3>
+        <ul>
+          <li>✔ Unbegrenzte Dateien</li>
+          <li>✔ Keine Werbung</li>
+          <li>✔ Offline nutzbar</li>
+          <li>✔ Schneller Batch-Modus</li>
+        </ul>
+        <strong>Einmalig 19,99 €</strong>
+        <br /><br />
+        <button disabled>Desktop-Version (kommt bald)</button>
+      </div>
 
       {showAdOverlay && (
         <div
